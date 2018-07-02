@@ -62,7 +62,7 @@ function task4_3gen(numberFromBag, widthCanvas, heightCanvas) {
             'Ответ: ' + answer;
     }
 
-    return task_text + '✂' + answer;
+    return task_text/* + '✂' + answer*/;
 
 }
 	
@@ -200,7 +200,7 @@ function task14_4gen(numberFromBag, widthCanvas, heightCanvas) {
             'Ответ: ' + answer;
     }    
 
-    return task_text + '<br>✂' + answer;
+    return task_text/* + '<br>✂' + answer*/;
 
 }
 	
@@ -436,6 +436,341 @@ function task18_2gen(numberFromBag, widthCanvas, heightCanvas) {
             'Ответ: ' + answer;
     }        
        
-    return task_text + '✂' + answer;
+    return task_text/* + '✂' + answer*/;
 
+}
+
+task1_3gen();
+	
+/* Задача ГИА 1.3 */
+function task1_3gen(numberFromBag, widthCanvas, heightCanvas) {
+	
+var debugMode = false;	
+
+do {
+	var aList = [2, 4, 5, 8, 10, 20, 25];
+	var a = aList[randomInt(0, aList.length-1)];
+	
+	//b ∈ [-10; -1] U [1; 10]
+	var b = (randomInt(0, 1) === 0 ? randomInt(-10, -1) : randomInt(1, 10));
+
+} while (a == b);
+
+var c = randomInt(-10, 10),
+	d = randomInt(-10, 10),
+	e = randomInt(-10, 10);
+	
+var k = randomInt(1, 2);
+
+//Итоговый ответ на задачу
+var answer = roundToFloat(Math.pow(a, k) * Math.pow(b/a, k+1) + (c/a)*d + e, 6);
+
+//Текст условия задачи
+var task_text = '' + 
+'Найдите значение выражения ' + 
+
+tex(
+
+//1 слагаемое
+texCoef(texPow(a, k) + '\\cdot ', texPow((b < 0 ? '-' : '') + texFrac(Math.abs(b), a), k+1), true) + 
+
+//2 слагаемое
+(c !== 0 && d !== 0 ? (c < 0 ? '-' : '+') + texFrac(Math.abs(c), a) + '\\cdot ' + (d < 0 ? '(' : '') + d + (d < 0 ? ')' : '') : '') + 
+
+//3 слагаемое
+texCoef(e, '')
+
+) + '<br><br>';
+
+//Вывод на экран
+if (debugMode) {
+	document.body.innerHTML = '' +
+	'a: ' + a + '<br>' + 
+	'b: ' + b + '<br>' + 
+	'c: ' + c + '<br>' + 
+	'd: ' + d + '<br>' + 
+	'k: ' + k + '<br>' + 
+	'e: ' + e + '<br>' + 
+	'task_text:<br><br><div style = \'background-color:#f7f7f7;\'>' + task_text + '<div>' +
+	'Ответ: ' + answer;
+}
+
+return task_text/* + '✂' + answer*/;
+
+}
+
+task4_7gen(0, 300, 300);
+
+function task4_7gen(numberFromBag, widthCanvas, heightCanvas) {
+    
+    var debugMode = false;
+    
+    var task_text, answer;
+    
+    var a, b, c2, x, x1, x2, y1, y2, k, d;
+    
+    //Генерируем значения 
+    
+    a = randomInt(1, 2)*pm();
+    
+    //x1 и x2 - абсциссы пересечения прямой и параболы
+    
+    do {
+    
+        do {
+            
+            x1 = randomInt(1, 4)*pm();
+            x2 = randomInt(1, 4)*pm();
+            
+        } while (x1 == x2);
+                
+        b = randomInt(1, 4)*pm();
+        c2 = randomInt(1, 5)*pm();
+        
+        k = b + a*(x1 + x2);
+        d = c2 - a*x1*x2;
+        
+    } while (k === 0);
+    
+    //Рисунок
+    
+    var cv = createCanvas(widthCanvas, heightCanvas);
+    var c = cv.getContext("2d"); 
+    
+    var x_step = 15;    //Шаг по оси х - 15 пикселей - единица
+    var y_step = 4;    //Шаг по оси y - 4 пикселя - единица
+    
+    var pCenterX = -b/(2*a), 
+        pCenterY = -(b*b-4*a*c2)/(4*a);
+
+    //Ставим центр координат для рисунка по центру оси х и вверху оси Y
+    //если а < 0, внизу оси Y, если а > 0
+    
+    //Координата, куда переносим центр по оси Y
+    //Нужна, чтобы оси правильно отрисовать
+    var y_center; 
+    
+    if(a > 0) {
+        c.translate(widthCanvas*0.5, heightCanvas*0.75); 
+        y_center = heightCanvas*0.75;
+    } else if (a < 0) {
+        c.translate(widthCanvas*0.5, heightCanvas*0.25);  
+        y_center = heightCanvas*0.25;
+    } 
+    
+/*    //Рисуем сетку
+    
+    // серые цвет линий
+    c.strokeStyle = '#f1f1f1';
+    
+    c.beginPath();
+    
+    //вертикальные линии - правая половина
+    for(i = 0; i < widthCanvas*0.5; i+=x_step) {
+     
+        c.moveTo(i-pCenterX*x_step, pCenterY*y_step);
+        c.lineTo(i-pCenterX*x_step, heightCanvas + pCenterY*y_step);
+        c.moveTo(i-pCenterX*x_step, pCenterY*y_step);
+        c.lineTo(i-pCenterX*x_step, -heightCanvas + pCenterY*y_step); 
+        
+    }
+    
+    //Вертикальные линии - левая половина
+    for(i = 0; i > -widthCanvas*0.5; i-=x_step) {
+     
+        c.moveTo(i-pCenterX*x_step, pCenterY*y_step);
+        c.lineTo(i-pCenterX*x_step, heightCanvas + pCenterY*y_step);
+        c.moveTo(i-pCenterX*x_step, pCenterY*y_step);
+        c.lineTo(i-pCenterX*x_step, -heightCanvas + pCenterY*y_step); 
+        
+    }
+    
+   //Горизонтальные линии - нижняя половина
+    for(i = 0; i < heightCanvas+y_center; i+=y_step) {
+     
+        c.moveTo(-pCenterX*x_step, i + pCenterY*y_step);
+        c.lineTo(widthCanvas*0.5,  i + pCenterY*y_step);
+        c.moveTo(-pCenterX*x_step, i + pCenterY*y_step);
+        c.lineTo(-widthCanvas*0.5, i + pCenterY*y_step);
+        
+    }    
+    
+    for(i = 0; i > -heightCanvas-y_center; i-=y_step) {
+     
+        c.moveTo(-pCenterX*x_step, i + pCenterY*y_step);
+        c.lineTo(widthCanvas*0.5,  i + pCenterY*y_step);
+        c.moveTo(-pCenterX*x_step, i + pCenterY*y_step);
+        c.lineTo(-widthCanvas*0.5, i + pCenterY*y_step);
+        
+    }  
+   
+    c.stroke();
+    c.closePath();  */
+    
+    //Цвет параболы
+    c.fillStyle = '#0086cd';
+    c.strokeStyle = '#0086cd';
+    
+    c.beginPath();
+    
+    for(var i = -widthCanvas*0.5; i < widthCanvas*0.5; i++) {
+    
+        x = i*0.1;
+        
+        //Установка в нужную точку при первом цикле
+        if (i == -widthCanvas*0.5) {
+            c.moveTo(x_step*(i*0.1 - pCenterX), -(a*x*x + b*x + c2 - pCenterY)*y_step);
+        }
+        
+        c.lineTo(x_step*(i*0.1 - pCenterX), -(a*x*x + b*x + c2 - pCenterY)*y_step);
+                
+    }
+    
+    c.stroke();
+    c.closePath();
+    
+    //Рисуем прямую, которая пересекает параболу в точках с абсциссами x1 и x2
+    
+    c.fillStyle = '#0086cd';
+    c.strokeStyle = '#0086cd';
+    
+    c.beginPath();
+    
+    for(i = -widthCanvas*0.5; i < widthCanvas*0.5; i++) {
+    
+        x = i*0.1;
+        
+        //Установка в нужную точку при первом цикле
+        if (i == -widthCanvas*0.5) {
+            c.moveTo(x_step*(i*0.1 - pCenterX), -(k*x + d - pCenterY)*y_step);
+        }
+        
+        c.lineTo(x_step*(i*0.1 - pCenterX), -(k*x + d - pCenterY)*y_step);
+                
+    }
+    
+    c.stroke();
+    c.closePath();
+       
+    //Рисуем оси
+    
+    c.strokeStyle = 'black';
+    c.beginPath();
+    
+    //Ось X
+    c.moveTo(-pCenterX*x_step, pCenterY*y_step);
+    c.lineTo(widthCanvas*0.5 - 10, pCenterY*y_step);
+    c.moveTo(-pCenterX*x_step, pCenterY*y_step);
+    c.lineTo(-widthCanvas*0.5 + 10, pCenterY*y_step);
+    
+    //Ось Y
+    c.moveTo(-pCenterX*x_step, pCenterY*y_step);
+    c.lineTo(-pCenterX*x_step, heightCanvas-y_center - 10);
+    c.moveTo(-pCenterX*x_step, pCenterY*y_step);
+    c.lineTo(-pCenterX*x_step, -y_center + 10); 
+     
+    c.stroke();
+    c.closePath();   
+    
+    //Отмечаем и подписываем точки пересечения графиков
+    
+    c.strokeStyle = 'black';
+    c.fillStyle = 'black';
+    c.beginPath();
+    
+    y1 = a*x1*x1 + b*x1 + c2;
+    y2 = a*x2*x2 + b*x2 + c2;
+    
+    c.arc((x1 - pCenterX)*x_step, -(y1 - pCenterY)*y_step, 3.0, 0.0, 2.0 * Math.PI, true);
+    c.arc((x2 - pCenterX)*x_step, -(y2 - pCenterY)*y_step, 3.0, 0.0, 2.0 * Math.PI, true);
+    
+    c.font = 'bold 14pt times new roman';            
+    c.fillText('A', (x1 - pCenterX)*x_step + 5, -(y1 - pCenterY)*y_step + 5);
+    c.fillText('B', (x2 - pCenterX)*x_step + 5, -(y2 - pCenterY)*y_step + 5);
+    
+    c.fill();
+    c.closePath();   
+    
+    //Рисуем стрелочки на осях и подписываем оси
+    
+    c.beginPath();
+    c.moveTo(widthCanvas*0.5 - 10, -5 + pCenterY*y_step);
+    c.lineTo(widthCanvas*0.5, pCenterY*y_step);
+    c.lineTo(widthCanvas*0.5 - 10, 5 + pCenterY*y_step);
+    c.lineTo(widthCanvas*0.5 - 10, -5 + pCenterY*y_step);
+    c.fill();
+    c.closePath();
+    
+    /* стрелочка на оси Y */
+    c.beginPath();
+    c.moveTo(-5 - pCenterX*x_step, -y_center + 20);
+    c.lineTo(-pCenterX*x_step, -y_center + 10);
+    c.lineTo(5 -pCenterX*x_step, -y_center + 20);
+    c.lineTo(-5 -pCenterX*x_step, -y_center + 20);
+    c.fill();
+    c.closePath();
+    
+    c.textAlign = 'center';
+    c.font = 'italic 12pt Arial';
+    
+    //Подпись на оси Y
+    c.fillText('y', -pCenterX*x_step - 10, -y_center+10 + 10);
+    
+    //Подпись на оси X
+    c.fillText('x', 140, -10 + pCenterY*y_step);
+        
+    var imgCanvas = saveCanvasIntoImg(cv);
+    
+    task_text = '<p>На рисунке изображены графики функций' + '<br>' +
+                texIn('y=' + texCoef(a, 'x^2', true) + texCoef(b, 'x') + texCoef(c2, '')) + ' и ' + 
+                texIn('y=' + texCoef(k, 'x', true) + texCoef(d, '')) + 
+                '. Они пересекаются в точках ' + texIn('A') + ' и ' + texIn('B') + '.' + '<br/>';
+    
+    var task_type = randomInt(1, 4);
+    
+    switch(task_type) {
+    
+        case 1:
+            task_text += 'Найдите абсциссу точки ' + texIn('A') + '.<br/><br/>';
+            answer = x1;            
+        break;
+            
+        case 2:
+            task_text += 'Найдите абсциссу точки ' + texIn('B') + '.<br/><br/>';
+            answer = x2;  
+        break;   
+            
+        case 3:
+            task_text += 'Найдите ординату точки ' + texIn('A') + '.<br/><br/>';
+            answer = y1;  
+            
+        break;
+            
+        case 4:
+            task_text += 'Найдите ординату точки ' + texIn('B') + '.<br/><br/>';
+            answer = y2;
+        break;
+                        
+    }
+        
+    task_text += imgCanvas.outerHTML;
+    
+     if (debugMode) {
+        document.body.innerHTML = '' + 
+            'x1:' + ' ' + x1 + '<br/>' +
+            'y1:' + ' ' + y1 + '<br/>' +
+            'x2:' + ' ' + x2 + '<br/>' +             
+            'y2:' + ' ' + y2 + '<br/>' + 
+            'a:' + ' ' + a + '<br/>' +
+            'b:' + ' ' + b + '<br/>' +
+            'c2:' + ' ' + c2 + '<br/>' +
+            'k:' + ' ' + k + '<br/>' +
+            'd:' + ' ' + d + '<br/>' +
+            'pCenterX:' + ' ' + pCenterX + '<br/>' +
+            'pCenterY:' + ' ' + pCenterY + '<br/>' +            
+            'task_text:<br><div style = \'background-color:#f7f7f7;\'>' + task_text + '</div>' + 'Ответ: ' + answer;
+     }
+
+     return task_text/* + '✂' + answer*/;   
+    
 }
